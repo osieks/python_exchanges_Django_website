@@ -1,11 +1,19 @@
 # exchange_data/views.py
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
+from decimal import Decimal
 import json
-from datetime import timedelta
+from datetime import datetime, timedelta
 from .models import BinanceData
 from .utils import fetch_binance_data, fetch_historical_binance_data
+
+def data_table(request):
+    # Fetch all BinanceData entries, ordered by timestamp
+    data_entries = BinanceData.objects.all().order_by('-timestamp')
+
+    # Render the data in the 'data_table.html' template
+    return render(request, 'data_table.html', {'data_entries': data_entries})
 
 def index(request):
     symbol = 'BTCUSDT'
@@ -16,28 +24,19 @@ def index(request):
     if existing_count < 100:
         # If we have less than 100 points, fetch historical data
         historical_data = fetch_historical_binance_data(symbol)
-        if historical_data:
+        
+        if len(historical_data) != 0:
             # Clear existing data
             BinanceData.objects.filter(symbol=symbol).delete()
-            
-            # Create a dictionary to store unique timestamp-price pairs
-            unique_data = {}
-            for point in historical_data:
-                timestamp = timezone.datetime.fromtimestamp(
-                    point['timestamp']/1000,
-                    tz=timezone.get_current_timezone()
-                )
-                # Only keep the latest price for each timestamp
-                unique_data[timestamp] = point['price']
             
             # Bulk create new records from unique data
             bulk_data = [
                 BinanceData(
                     symbol=symbol,
-                    price=price,
-                    timestamp=timestamp
+                    price=point['price'],
+                    timestamp=point['timestamp']
                 )
-                for timestamp, price in unique_data.items()
+                for point in historical_data
             ]
             BinanceData.objects.bulk_create(bulk_data)
     
@@ -45,10 +44,11 @@ def index(request):
     recent_data = BinanceData.objects.filter(symbol=symbol).order_by('-timestamp').first()
     
     if recent_data:
+        # Convert the integer timestamp to a datetime object
         recent_data_dict = {
             'symbol': recent_data.symbol,
-            'price': float(recent_data.price),
-            'timestamp': recent_data.timestamp.isoformat()
+            'price': recent_data.price,
+            'timestamp': recent_data.timestamp
         }
     else:
         recent_data_dict = None
@@ -57,7 +57,7 @@ def index(request):
     historical_data = BinanceData.objects.filter(symbol=symbol).order_by('-timestamp')[:100]
     price_history = [
         {
-            'timestamp': entry.timestamp.isoformat(),
+            'timestamp': entry.timestamp,
             'price': float(entry.price)
         }
         for entry in reversed(historical_data)  # Reverse to show oldest to newest
@@ -68,3 +68,17 @@ def index(request):
         'price_history': json.dumps(price_history, cls=DjangoJSONEncoder)
     }
     return render(request, 'exchange_data/index.html', context)
+
+# View to clear the data
+def clear_data(request):
+    if request.method == "POST":
+        # Clear all data from the model (adjust this according to your models)
+        BinanceData.objects.all().delete()
+        # Optionally, you can clear more models, or reset the database entirely
+        # OtherModel.objects.all().delete()
+
+        # Redirect to the /data_table after clearing the data
+        return redirect('data_table')  # Adjust this to your actual data page URL
+
+    # If the request isn't POST, render the confirmation page (optional)
+    return render(request, 'clear_data_confirmation.html')

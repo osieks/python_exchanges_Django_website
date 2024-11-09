@@ -1,0 +1,16 @@
+<!-- clear_data_confirmation.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clear Data Confirmation</title>
+</head>
+<body>
+    <h1>Are you sure you want to clear all the data?</h1>
+    <form action="{% url 'clear_data' %}" method="post">
+        {% csrf_token %}
+        <button type="submit">Yes, Clear All Data</button>
+    </form>
+    <a href="{% url 'data_table' %}">No, Go Back</a>
+</body>
+</html>

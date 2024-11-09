@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'exchange_data',
+    'crypto_website',
     #'exchange_data.apps.ExchangeDataConfig',
 ]
 

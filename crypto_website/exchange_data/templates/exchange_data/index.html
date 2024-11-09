@@ -72,21 +72,30 @@
             </div>
         {% endif %}
     </div>
-
+    <form action="{% url 'data_table' %}" method="post">
+        <button type="submit" class="btn btn-danger btn-lg">Data</button>
+    </form>
     <script>
-        // Format the timestamp
-        const lastUpdate = new Date('{{ recent_data.timestamp }}');
-        document.getElementById('lastUpdate').textContent = lastUpdate.toLocaleString();
-
+        // Use Moment.js to parse and format the last update timestamp
+        const lastUpdateTimestamp = '{{ recent_data.timestamp|date:"Y-m-d H:i:s" }}';
+        if (lastUpdateTimestamp) {
+            const formattedLastUpdate = moment(lastUpdateTimestamp, moment.ISO_8601).isValid()
+        ? moment(lastUpdateTimestamp, moment.ISO_8601).format('MMM D, YYYY HH:mm:ss')
+        : 'Invalid Date';
+            document.getElementById('lastUpdate').textContent = formattedLastUpdate;
+        } else {
+            document.getElementById('lastUpdate').textContent = 'Just now';
+        }
+    
         // Parse the price history data
         const priceHistory = {{ price_history|safe }};
-        
+    
         // Prepare data for the chart
         const chartData = priceHistory.map(entry => ({
-            x: new Date(entry.timestamp),
+            x: moment(entry.timestamp).toDate(),  // Convert each timestamp to a JS Date
             y: entry.price
         }));
-
+    
         // Create the chart
         const ctx = document.getElementById('priceChart').getContext('2d');
         new Chart(ctx, {
@@ -151,11 +160,12 @@
                 }
             }
         });
-
+    
         // Auto refresh the page every hour
         setTimeout(function() {
             window.location.reload();
         }, 3600000);
     </script>
+    
 </body>
 </html>
