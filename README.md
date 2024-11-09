@@ -1,6 +1,6 @@
 # Django Docker Setup with PostgreSQL
 
-This repository contains a simple setup for running a Django application with PostgreSQL inside Docker containers. The setup leverages Docker Compose to run both the Django application and PostgreSQL database. The Django application is served using the default development server.
+This repository contains a simple setup for running a Django application with PostgreSQL inside Docker containers. The setup leverages Docker Compose to run both the Django application and PostgreSQL database. The Django application is served using the default development server. Connect via API to an exchange and storing historical data of btc.
 
 ## Visit
 http://mdziezok.ddns.net:8001
