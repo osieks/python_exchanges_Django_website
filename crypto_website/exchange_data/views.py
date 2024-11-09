@@ -20,17 +20,24 @@ def index(request):
             # Clear existing data
             BinanceData.objects.filter(symbol=symbol).delete()
             
-            # Bulk create new records
+            # Create a dictionary to store unique timestamp-price pairs
+            unique_data = {}
+            for point in historical_data:
+                timestamp = timezone.datetime.fromtimestamp(
+                    point['timestamp']/1000,
+                    tz=timezone.get_current_timezone()
+                )
+                # Only keep the latest price for each timestamp
+                unique_data[timestamp] = point['price']
+            
+            # Bulk create new records from unique data
             bulk_data = [
                 BinanceData(
                     symbol=symbol,
-                    price=point['price'],
-                    timestamp=timezone.datetime.fromtimestamp(
-                        point['timestamp']/1000,
-                        tz=timezone.get_current_timezone()
-                    )
+                    price=price,
+                    timestamp=timestamp
                 )
-                for point in historical_data
+                for timestamp, price in unique_data.items()
             ]
             BinanceData.objects.bulk_create(bulk_data)
     
@@ -46,14 +53,14 @@ def index(request):
     else:
         recent_data_dict = None
 
-    # Get historical data for the chart
-    historical_data = BinanceData.objects.filter(symbol=symbol).order_by('timestamp')
+    # Get historical data for the chart - limit to latest 100 points
+    historical_data = BinanceData.objects.filter(symbol=symbol).order_by('-timestamp')[:100]
     price_history = [
         {
             'timestamp': entry.timestamp.isoformat(),
             'price': float(entry.price)
         }
-        for entry in historical_data
+        for entry in reversed(historical_data)  # Reverse to show oldest to newest
     ]
     
     context = {

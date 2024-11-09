@@ -8,3 +8,9 @@ class BinanceData(models.Model):
 
     def __str__(self):
         return f"{self.symbol} - {self.price} at {self.timestamp}"
+    
+    class Meta:
+        unique_together = ['symbol', 'timestamp']
+        indexes = [
+            models.Index(fields=['symbol', 'timestamp'])
+        ]
