@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0/dist/chartjs-adapter-moment.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -71,10 +72,13 @@
                 <p>No data available</p>
             </div>
         {% endif %}
+
+        <form action="{% url 'data_table' %}" method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success btn-lg">Data</button>
+        </form>
     </div>
-    <form action="{% url 'data_table' %}" method="post">
-        <button type="submit" class="btn btn-danger btn-lg">Data</button>
-    </form>
+
     <script>
         // Use Moment.js to parse and format the last update timestamp
         const lastUpdateTimestamp = '{{ recent_data.timestamp|date:"Y-m-d H:i:s" }}';
