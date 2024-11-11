@@ -15,14 +15,16 @@
     <table class="table table-bordered">
         <thead>
             <tr>
+                <th>idx</th>
                 <th>Symbol</th>
                 <th>Price</th>
                 <th>Timestamp</th>
             </tr>
         </thead>
         <tbody>
-            {% for entry in data_entries %}
+            {% for idx,entry in enumerate(data_entries) %}
             <tr>
+                <td>{{ idx }}</td>
                 <td>{{ entry.symbol }}</td>
                 <td>{{ entry.price }}</td>
                 <td>{{ entry.timestamp }}</td>
