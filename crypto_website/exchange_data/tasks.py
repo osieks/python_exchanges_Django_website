@@ -27,5 +27,6 @@ def update_crypto_data():
 
 def start_scheduler():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(update_crypto_data, 'interval', hours=1)
+    #scheduler.add_job(update_crypto_data, 'interval', hours=1)
+    scheduler.add_job(update_crypto_data, 'interval', minutes=1)
     scheduler.start()
