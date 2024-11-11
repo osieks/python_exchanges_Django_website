@@ -10,8 +10,9 @@ def fetch_binance_data(symbol, interval='1h', limit=1):
         'limit': limit
     }
     response = requests.get(base_url, params=params)
+    data = response.json()
     if response.status_code == 200:
-        return response.json()
+        return [{'timestamp': candlestick[0], 'price': candlestick[4]} for candlestick in data]
     else:
         print(f"Error fetching data from Binance: {response.status_code}")
         return None
@@ -21,5 +22,5 @@ def fetch_historical_binance_data(symbol):
     data = fetch_binance_data(symbol, interval='1h', limit=100)
     print(data)
     if data:
-        return [{'timestamp': candlestick[0], 'price': candlestick[4]} for candlestick in data]
+        return data
     return None

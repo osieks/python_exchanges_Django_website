@@ -11,18 +11,19 @@ def update_crypto_data():
     # Fetch latest data from Binance
     binance_data = fetch_binance_data(symbol=symbol)
     if binance_data and len(binance_data) > 0:
-        candlestick = binance_data[0]
-        close_price = float(candlestick[4])
-
-        # Save the data to the database
-        BinanceData.objects.create(
-            symbol=symbol,
-            price=close_price
-        )
+        # Clear existing data
+        BinanceData.objects.filter(symbol=symbol).delete()
         
-        print(f"Data for {symbol} updated at {timezone.now()}")
-    else:
-        print("Failed to fetch data from Binance")
+        # Bulk create new records from unique data
+        bulk_data = [
+            BinanceData(
+                symbol=symbol,
+                price=point['price'],
+                timestamp=point['timestamp']
+            )
+            for point in binance_data
+        ]
+        BinanceData.objects.bulk_create(bulk_data)
 
 def start_scheduler():
     scheduler = BackgroundScheduler()
