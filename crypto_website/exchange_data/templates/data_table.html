@@ -28,12 +28,14 @@
             </tr>
         </thead>
         <tbody>
+            {% load timetags %}
             {% for entry in data_entries %}
             <tr>
                 <td>{{ forloop.counter0 }}</td>
                 <td>{{ entry.symbol }}</td>
                 <td>{{ entry.price }}</td>
                 <td>{{ entry.timestamp }}</td>
+                <td>{{ timestamp|print_timestamp }}</td>
             </tr>
             {% endfor %}
         </tbody>

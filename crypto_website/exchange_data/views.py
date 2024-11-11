@@ -7,6 +7,7 @@ import json
 from datetime import datetime, timedelta
 from .models import BinanceData
 from .utils import fetch_binance_data, fetch_historical_binance_data
+import time
 
 def data_table(request):
     # Fetch all BinanceData entries, ordered by timestamp
