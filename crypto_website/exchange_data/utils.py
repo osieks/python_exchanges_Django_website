@@ -19,7 +19,7 @@ def fetch_binance_data(symbol, interval='1h', limit=1):
 
 def fetch_historical_binance_data(symbol):
     # Fetch last 100 hourly candles
-    data = fetch_binance_data(symbol, interval='1h', limit=100)
+    data = fetch_binance_data(symbol, interval='1h', limit=168)
     print(data)
     if data:
         return data

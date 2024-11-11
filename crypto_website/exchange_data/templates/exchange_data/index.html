@@ -73,6 +73,20 @@
             </div>
         {% endif %}
 
+        <p>Data Limit: {{ data_limit }}</p>
+
+        <!-- Dropdown to select the data limit -->
+        <form method="get" action="{% url 'index' %}">
+            <label for="dataLimit">Select Data Range:</label>
+            <select name="data_limit" id="dataLimit" class="form-control" onchange="this.form.submit()">
+                <option value="24" {% if data_limit == 24 %}selected{% endif %}>Last 24 hours</option>
+                <option value="48" {% if data_limit == 48 %}selected{% endif %}>Last 2 days</option>
+                <option value="72" {% if data_limit == 72 %}selected{% endif %}>Last 3 days</option>
+                <option value="168" {% if data_limit == 168 %}selected{% endif %}>Last week</option>
+                <option value="-1" {% if data_limit == -1 %}selected{% endif %}>All entries</option>
+            </select>
+        </form>
+        <br>
         <form action="{% url 'data_table' %}" method="post">
             {% csrf_token %}
             <button type="submit" class="btn btn-success btn-lg">Data</button>
