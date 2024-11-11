@@ -21,13 +21,13 @@ def index(request):
     # Count existing data points
     existing_count = BinanceData.objects.filter(symbol=symbol).count()
     
-    if existing_count < 168:
+    if existing_count < 2:
         # If we have less than x points, fetch historical data
         historical_data = fetch_historical_binance_data(symbol)
         
         if len(historical_data) != 0:
             # Clear existing data
-            BinanceData.objects.filter(symbol=symbol).delete()
+            #BinanceData.objects.filter(symbol=symbol).delete()
             
             # Bulk create new records from unique data
             bulk_data = [
