@@ -2,7 +2,7 @@
 from decimal import Decimal
 import requests
 
-def fetch_binance_data(symbol, interval='1m', limit=1):
+def fetch_binance_data(symbol, interval='1h', limit=1):
     base_url = "https://api.binance.com/api/v3/klines"
     params = {
         'symbol': symbol.upper(),
@@ -17,9 +17,9 @@ def fetch_binance_data(symbol, interval='1m', limit=1):
         print(f"Error fetching data from Binance: {response.status_code}")
         return None
 
-def fetch_historical_binance_data(symbol,interval='1m',limit=168):
+def fetch_historical_binance_data(symbol):
     # Fetch last x candles
-    data = fetch_binance_data(symbol, interval='1m', limit=168)
+    data = fetch_binance_data(symbol, interval='1h', limit=168)
     print(data)
     if data:
         return data

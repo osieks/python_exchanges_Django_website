@@ -44,6 +44,10 @@
     <form action="{% url 'clear_data' %}" method="post">
         {% csrf_token %}
         <button type="submit" class="btn btn-danger btn-lg">Clear Database</button>
+    </form>    
+    <form action="{% url 'update_data' %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success btn-lg">update data</button>
     </form>
 </div>
 

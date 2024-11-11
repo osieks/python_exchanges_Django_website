@@ -7,6 +7,7 @@ import json
 from datetime import datetime, timedelta
 from .models import BinanceData
 from .utils import fetch_binance_data, fetch_historical_binance_data
+from .tasks import update_crypto_data
 import time
 
 def data_table(request):
@@ -18,29 +19,6 @@ def data_table(request):
 
 def index(request):
     symbol = 'BTCUSDT'
-
-    # Count existing data points
-    existing_count = BinanceData.objects.filter(symbol=symbol).count()
-    
-    if existing_count < 2:
-        # If we have less than x points, fetch historical data
-        historical_data = fetch_historical_binance_data(symbol)
-        
-        if len(historical_data) != 0:
-            # Clear existing data
-            #BinanceData.objects.filter(symbol=symbol).delete()
-            
-            # Bulk create new records from unique data
-            bulk_data = [
-                BinanceData(
-                    symbol=symbol,
-                    price=point['price'],
-                    timestamp=point['timestamp']
-                )
-                for point in historical_data
-            ]
-            BinanceData.objects.update_or_create(bulk_data)
-    
 
     # Get the data limit from the request, or default
     data_limit = request.GET.get('data_limit', '48')
@@ -68,7 +46,7 @@ def index(request):
     if data_limit == -1:
         historical_data = BinanceData.objects.filter(symbol=symbol).order_by('-timestamp')
     else:
-        historical_data = BinanceData.objects.filter(symbol=symbol).order_by('-timestamp')[:data_limit]
+        historical_data = BinanceData.objects.filter(symbol=symbol).order_by('-timestamp')[:(data_limit)]
     # Get historical data for the chart - limit to latest x points
     #historical_data = BinanceData.objects.filter(symbol=symbol).order_by('-timestamp')[:168]
     price_history = [
@@ -98,4 +76,10 @@ def clear_data(request):
         return redirect('data_table')  # Adjust this to your actual data page URL
 
     # If the request isn't POST, render the confirmation page (optional)
-    return render(request, 'clear_data_confirmation.html')
+    return render(request, 'clear_data_confirmation.html')# View to clear the data
+
+def update_data(request):
+    if request.method == "POST":
+        update_crypto_data()
+        return redirect('data_table')
+    return render(request, 'clear_data_confirmation.html')# View to clear the data
