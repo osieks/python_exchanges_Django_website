@@ -22,9 +22,9 @@
             </tr>
         </thead>
         <tbody>
-            {% for idx,entry in enumerate(data_entries) %}
+            {% for entry in data_entries %}
             <tr>
-                <td>{{ idx }}</td>
+                <td>{{ forloop.counter0 }}</td>
                 <td>{{ entry.symbol }}</td>
                 <td>{{ entry.price }}</td>
                 <td>{{ entry.timestamp }}</td>
