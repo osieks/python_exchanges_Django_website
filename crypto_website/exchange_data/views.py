@@ -39,10 +39,10 @@ def index(request):
                 )
                 for point in historical_data
             ]
-            BinanceData.objects.bulk_create(bulk_data)
+            BinanceData.objects.update_or_create(bulk_data)
     
 
-    # Get the data limit from the request, or default to 168
+    # Get the data limit from the request, or default
     data_limit = request.GET.get('data_limit', '48')
     
     try:

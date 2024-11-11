@@ -4,15 +4,15 @@ from django.utils import timezone
 from .models import BinanceData
 from .utils import fetch_binance_data
 
-def update_crypto_data():
+def update_crypto_data(interval='1m'):
     # Define the symbol you want to track
     symbol = 'BTCUSDT'
 
     # Fetch latest data from Binance
-    binance_data = fetch_binance_data(symbol=symbol)
+    binance_data = fetch_binance_data(symbol=symbol,interval=interval)
     if binance_data and len(binance_data) > 0:
         # Clear existing data
-        BinanceData.objects.filter(symbol=symbol).delete()
+        #BinanceData.objects.filter(symbol=symbol).delete()
         
         # Bulk create new records from unique data
         bulk_data = [
