@@ -20,6 +20,7 @@ def data_table(request):
 def index(request):
     symbol = 'BTCUSDT'
 
+    recent_data = BinanceData.objects.last()
     # Get the data limit from the request, or default
     data_limit = request.GET.get('data_limit', '48')
     

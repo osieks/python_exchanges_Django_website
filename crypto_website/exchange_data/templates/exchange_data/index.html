@@ -56,12 +56,12 @@
 <body>
     <div class="container">
         <h1>Crypto Price Tracker</h1>
-        
+        {% load timetag %}
         {% if recent_data %}
             <div class="price-card">
                 <div class="symbol">{{ recent_data.symbol }}</div>
                 <div class="price">${{ recent_data.price }}</div>
-                <div class="timestamp">Last Updated: <span id="lastUpdate"></span></div>
+                <div class="timestamp">Last Updated: {{ recent_data.timestamp|print_timestamp }}</div>
             </div>
 
             <div class="chart-container">
@@ -94,16 +94,6 @@
     </div>
 
     <script>
-        // Use Moment.js to parse and format the last update timestamp
-        const lastUpdateTimestamp = '{{ recent_data.timestamp|date:"Y-m-d H:i:s" }}';
-        if (lastUpdateTimestamp) {
-            const formattedLastUpdate = moment(lastUpdateTimestamp, moment.ISO_8601).isValid()
-        ? moment(lastUpdateTimestamp, moment.ISO_8601).format('MMM D, YYYY HH:mm:ss')
-        : 'Invalid Date';
-            document.getElementById('lastUpdate').textContent = formattedLastUpdate;
-        } else {
-            document.getElementById('lastUpdate').textContent = 'Just now';
-        }
     
         // Parse the price history data
         const priceHistory = {{ price_history|safe }};
@@ -126,7 +116,10 @@
                     backgroundColor: 'rgba(40, 167, 69, 0.1)',
                     borderWidth: 2,
                     fill: true,
-                    tension: 0.4
+                    tension: 0.4,                   
+                    borderCapStyle: 'round',  // Smooth line ends (optional)
+                    borderJoinStyle: 'round',  // Smooth line joins (optional)           
+                    pointRadius: 0  // Removes the points (no markers)
                 }]
             },
             options: {
