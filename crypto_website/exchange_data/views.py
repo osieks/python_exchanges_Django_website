@@ -6,9 +6,9 @@ from decimal import Decimal
 import json
 from datetime import datetime, timedelta
 from .models import BinanceData
-from .utils import fetch_binance_data, fetch_historical_binance_data
+from .utils import fetch_binance_data
 from .tasks import update_crypto_data
-import time
+from django.http import HttpResponse
 
 def data_table(request):
     # Fetch all BinanceData entries, ordered by timestamp
@@ -80,6 +80,16 @@ def clear_data(request):
 
 def update_data(request):
     if request.method == "POST":
-        update_crypto_data()
-        return redirect('data_table')
-    return render(request, 'clear_data_confirmation.html')# View to clear the data
+        # Get the number of data points from the form
+        data_points = request.POST.get('data_points', 168)  # Default to 168 if not provided
+        try:
+            data_points = int(data_points)  # Convert to an integer
+        except ValueError:
+            return HttpResponse("Invalid number of data points", status=400)
+
+        # Call the function to update the crypto data
+        update_crypto_data(limit=data_points)  # Pass the user-defined limit to the task
+
+        return redirect('data_table')  # Redirect to the data_table page after updating
+
+    return render(request, 'clear_data_confirmation.html')  # Render a confirmation page if not a POST request

@@ -2,18 +2,20 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.utils import timezone
 from .models import BinanceData
-from .utils import fetch_binance_data,fetch_historical_binance_data
+from .utils import fetch_binance_data
 
-def update_crypto_data():
+def update_crypto_data(symbol = 'BTCUSDT', interval='1h', limit=1):
     # Define the symbol you want to track
-    symbol = 'BTCUSDT'
+    
 
     # Count existing data points
     existing_count = BinanceData.objects.filter(symbol=symbol).count()
     
     if existing_count < 100:
+        if limit < 100:
+            limit = 100
         # If we have less than x points, fetch historical data
-        historical_data = fetch_historical_binance_data(symbol)
+        historical_data = fetch_binance_data(symbol,interval,limit=limit)
         
         if len(historical_data) != 0:
             # Clear existing data
@@ -46,6 +48,6 @@ def update_crypto_data():
 
 def start_scheduler():
     scheduler = BackgroundScheduler()
-    #scheduler.add_job(update_crypto_data, 'interval', hours=1)
-    scheduler.add_job(update_crypto_data, 'interval', minutes=10)
+    scheduler.add_job(update_crypto_data, 'interval', hours=1)
+    #scheduler.add_job(update_crypto_data, 'interval', minutes=10)
     scheduler.start()

@@ -47,7 +47,12 @@
     </form>    
     <form action="{% url 'update_data' %}" method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-success btn-lg">update data</button>
+        
+        <!-- Input for number of historical data points -->
+        <label for="data_points">Enter number of data points:</label>
+        <input type="number" id="data_points" name="data_points" min="1" max="1000" value="168">
+        
+        <button type="submit" class="btn btn-success btn-lg">Update Data</button>
     </form>
 </div>
 
