@@ -2,8 +2,9 @@ from django.db import models
 
 # Create your models here.
 class BinanceData(models.Model):
-    symbol = models.CharField(max_length=10, db_index=True)
-    price = models.DecimalField(max_digits=20, decimal_places=8)
+    #datapoint_id = models.AutoField(primary_key=True)
+    symbol = models.CharField(max_length=10)
+    price = models.DecimalField(max_digits=20, decimal_places=4)
     timestamp = models.BigIntegerField(db_index=True)  # Storing Unix timestamp as an integer
     
     def __str__(self):

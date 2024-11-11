@@ -23,7 +23,7 @@ def update_crypto_data():
             )
             for point in binance_data
         ]
-        BinanceData.objects.bulk_create(bulk_data)
+        BinanceData.objects.update_or_create(bulk_data)
 
 def start_scheduler():
     scheduler = BackgroundScheduler()
