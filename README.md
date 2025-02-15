@@ -29,5 +29,5 @@ Start by cloning this repository:
 
 ```bash
 git clone git@github.com:osieks/python_exchanges_Django_website.git
-cd python_exchanges_Django_website
+cd python_exchanges_Django_website/crypto_website 
 docker compose up --build -d

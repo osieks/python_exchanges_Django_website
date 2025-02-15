@@ -9,14 +9,15 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - backend
+    restart: always
 
   web:
     build: .
     command: >
       bash -c "
+        /wait-for-it.sh db:5432 -- python manage.py runserver 0.0.0.0:8001 &&
         python manage.py makemigrations && 
-        python manage.py migrate && 
-        /wait-for-it.sh db:5432 -- python manage.py runserver 0.0.0.0:8001"
+        python manage.py migrate"
     volumes:
       - .:/app
     ports:
@@ -25,6 +26,7 @@ services:
       - db
     networks:
       - backend
+    restart: always
 
 networks:
   backend:
